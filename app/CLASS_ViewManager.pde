@@ -1,6 +1,8 @@
 import java.util.Map;
 import java.lang.Runnable;
 
+// ===== CLASS: View ===== //
+
 public class View {
   private String name;
   private PVector lookPos;
@@ -43,6 +45,8 @@ public class View {
 
   }
 }
+
+// ===== CLASS: ViewManager ===== //
 
 public class ViewManager {
   // ===== CLASS PROPERTIES ===== //
