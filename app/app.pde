@@ -16,6 +16,7 @@ public void setup(){
   size(800, 600, P3D);
   surface.setResizable(true);
   pixelDensity(2);
+  smooth(8);
 
   // ===== VARIABLE INIT ===== //
   viewDistance = 750;
