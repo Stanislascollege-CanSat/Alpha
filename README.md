@@ -4,4 +4,4 @@ This software will be used for the Dutch CanSat competition.
 
 - Application status: being developed.
 
-###### License [MIT](https://github.com/Stanislascollege-CanSat/Delta/blob/master/LICENSE)
+###### License [MIT](https://github.com/Stanislascollege-CanSat/Alpha/blob/master/LICENSE)
