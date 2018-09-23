@@ -6,12 +6,12 @@ boolean front_direction = true;
 public Runnable CONTENT_view_front = new Runnable(){
   public void run(){
     // ===== VIEW CONTENTS HERE (SIMILAR TO draw() LOOP) ===== //
-    
+
     textAlign(CENTER);
     textSize(25);
     fill(0);
-    text("Status Overview" + frameRate, 0, -height/1.8);
-    
+    text("Status Overview", 0, -height/1.8);
+
     translate(-width/2.5,height/4, 0);
     rotateX(-PI/2);
     noStroke();
@@ -48,7 +48,7 @@ public Runnable CONTENT_view_front = new Runnable(){
     translate(0,0,-30);
     rotateX(PI/2);
     translate(-width/2.5, -height/4,0);
-    
+
     if(front_direction){
       front_up += 0.2;
       if(front_up >= 10){
@@ -62,6 +62,6 @@ public Runnable CONTENT_view_front = new Runnable(){
         front_direction = true;
       }
     }
-    
+
   }
 };
