@@ -1,47 +1,32 @@
-import java.util.Map;
 import java.lang.Runnable;
 
-// ===== CLASS: View ===== //
-
 public class View {
-  private String name;
-  private PVector lookPos;
-  private PVector upPos;
-  private PVector straightRotation;
-  private Runnable showExecutable;
+  // PROPERTIES
+  private PVector pos;
+  private Runnable EXT_displayMethod;
 
-  public View(String n, float lx, float ly, float lz, float ux, float uy, float uz, float rx, float ry, float rz, Runnable exe){
-    this.name = n;
-    this.lookPos = new PVector(lx,ly,lz);
-    this.upPos = new PVector(ux,uy,uz);
-    this.straightRotation = new PVector(rx,ry,rz);
-    this.showExecutable = exe;
+  // INIT
+  public View(float x, float y, float z, Runnable exe){
+    this.pos = new PVector(x,y,z);
+    this.EXT_displayMethod = exe;
   }
 
-  public PVector getLookPos(){
-    return this.lookPos;
-  }
-
-  public PVector getUpPos(){
-    return this.upPos;
-  }
-
-  public void setShowExecutable(Runnable exe){
-    this.showExecutable = exe;
-  }
-
+  // METHODS
   public void show(){
-    translate(this.lookPos.x, this.lookPos.y, this.lookPos.z);
-    rotateX(this.straightRotation.x);
-    rotateY(this.straightRotation.y);
-    rotateZ(this.straightRotation.z);
-
-    this.showExecutable.run();
-
-    rotateX(-this.straightRotation.x);
-    rotateY(-this.straightRotation.y);
-    rotateZ(-this.straightRotation.z);
-    translate(-this.lookPos.x, -this.lookPos.y, -this.lookPos.z);
-
+    translate(this.pos.x, this.pos.y, this.pos.z);
+    this.EXT_displayMethod.run();
+    translate(-this.pos.x, -this.pos.y, -this.pos.z);
   }
+
+  public void curtainShow(float red, float green, float blue, float strength){
+    this.show();
+    translate(this.pos.x, this.pos.y, this.pos.z);
+    rectMode(CORNER);
+    noStroke();
+    fill(red, green, blue, strength);
+    rect(0, 0, width, height);
+    translate(-this.pos.x, -this.pos.y, -this.pos.z);
+  }
+
+
 }

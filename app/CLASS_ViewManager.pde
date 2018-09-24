@@ -1,124 +1,137 @@
-import java.util.Map;
-import java.lang.Runnable;
 
-// ===== CLASS: ViewManager ===== //
 
 public class ViewManager {
-  // ===== CLASS PROPERTIES ===== //
-  private Map<String, View> viewList;
-  private ArrayList<PVector[]> transitionSteps;
-  private View[] transitionFromTo;
-  private String[] transitionStringFromTo;
-  private boolean isTransitioning;
-  private String currentView;
-  private PVector currentCameraLookPos;
-  private PVector currentCameraUpPos;
-  private int amountOfTransitionSteps;
-  private boolean executeRunnableAfterTransition;
-  private Runnable executableAfterTransition;
+  // PROPERTIES
+  private PVector pos;
+  private float viewDepth;
+
+  private View dashboardView;
+  private ArrayList<View> viewList;
+  private int currentView;
+  private int previousView;
+  private float transitionOffset;
+  private float transitionSpeed;
+  private boolean transitionDirection;
+
+  private float scrollIndexYOffset;
+  private float scrollIndexBallSize;
+  private float scrollIndexBallContainer;
+  private color scrollIndexInactiveColor;
+  private color scrollIndexActiveColor;
 
 
-  // ===== CLASS INIT METHOD ===== //
-  public ViewManager(String name, View v) {
-    this.viewList = new HashMap<String, View>();
-    this.transitionSteps = new ArrayList<PVector[]>();
-    this.transitionFromTo = new View[2];
-    this.transitionStringFromTo = new String[2];
-    this.isTransitioning = false;
-    this.currentView = name;
-    this.viewList.put(name, v);
-    this.currentCameraLookPos = new PVector(0,0,0);
-    this.currentCameraUpPos = new PVector(0,1,0);
-    this.amountOfTransitionSteps = 50;
-    this.executeRunnableAfterTransition = false;
+
+  public ViewManager(float x, float y, float z, View db, float vd){
+    this.pos = new PVector(x,y,z);
+    this.viewDepth = vd;
+
+    this.dashboardView = db;
+    this.viewList = new ArrayList<View>();
+    this.currentView = -1;
+    this.previousView = -1;
+    this.transitionOffset = 0;
+    this.transitionSpeed = 8;
+
+    this.scrollIndexYOffset = 15;
+    this.scrollIndexBallSize = 6;
+    this.scrollIndexBallContainer = 8;
+    this.scrollIndexInactiveColor = color(150);
+    this.scrollIndexActiveColor = color(0);
   }
 
-  // ===== PRIVATE METHODS ===== //
-  private void setupTransition(String destination){
-    this.transitionFromTo[0] = this.viewList.get(this.currentView);
-    this.transitionFromTo[1] = this.viewList.get(destination);
-    this.transitionStringFromTo[0] = this.currentView;
-    this.transitionStringFromTo[1] = destination;
-
-    PVector deltaLookPos = this.transitionFromTo[1].getLookPos().copy();
-    deltaLookPos.sub(this.transitionFromTo[0].getLookPos());
-    PVector deltaUpPos = this.transitionFromTo[1].getUpPos().copy();
-    deltaUpPos.sub(this.transitionFromTo[0].getUpPos());
-
-
-    deltaLookPos.div(this.amountOfTransitionSteps);
-    deltaUpPos.div(this.amountOfTransitionSteps);
-
-    PVector[] step = new PVector[2];
-
-    step[0] = this.transitionFromTo[0].getLookPos().copy();
-    step[1] = this.transitionFromTo[0].getUpPos().copy();
-
-    this.transitionSteps.clear();
-
-
-    for(int i = 0; i < this.amountOfTransitionSteps-1; ++i){
-      PVector[] temp = new PVector[2];
-      temp[0] = step[0].copy();
-      temp[1] = step[1].copy();
-      this.transitionSteps.add(temp);
-      step[0].add(deltaLookPos);
-      step[1].add(deltaUpPos);
-
+  // PRIVATE METHODS
+  private void scrollToView(int index){
+    if(!(index == this.currentView)){
+      if(index >= 0 && index < this.viewList.size()){
+        // >> INDEX IS WITHIN VIEWRANGE
+        this.previousView = this.currentView;
+        this.currentView = index;
+      }else if(index >= this.viewList.size()){
+        this.scrollToView(0);
+      }else if(index < 0){
+        this.scrollToView(this.viewList.size()-1);
+      }
     }
-
-    this.currentView = destination;
-
-    this.isTransitioning = true;
-
   }
 
-  // ===== PUBLIC METHODS ===== //
+  private void endTransition(){
+    this.transitionOffset = 0;
+    this.previousView = -1;
+  }
+
+
+  // PUBLIC METHODS
+  public void scrollToRightView(){
+    this.transitionDirection = true;
+    this.scrollToView(this.currentView + 1);
+  }
+
+  public void scrollToLeftView(){
+    this.transitionDirection = false;
+    this.scrollToView(this.currentView - 1);
+  }
+
   public void show(){
-    if(!this.isTransitioning){
-      this.currentCameraLookPos = this.viewList.get(this.currentView).getLookPos();
-      this.currentCameraUpPos = this.viewList.get(this.currentView).getUpPos();
-      camera(0,0,0, this.currentCameraLookPos.x,this.currentCameraLookPos.y,this.currentCameraLookPos.z, this.currentCameraUpPos.x,
-                          this.currentCameraUpPos.y,this.currentCameraUpPos.z);
+    translate(this.pos.x, this.pos.y, this.pos.z);
+    //>> show the current view index
+    float w = this.viewList.size() * this.scrollIndexBallContainer;
+    float h = this.scrollIndexBallContainer;
+    float leftX = width/2 - w/2 + this.scrollIndexBallContainer/2;
+    for(int i = 0; i < this.viewList.size(); ++i){
+      noStroke();
+      fill(this.scrollIndexInactiveColor);
+      ellipse(leftX + i*this.scrollIndexBallContainer, this.scrollIndexYOffset, this.scrollIndexBallSize, this.scrollIndexBallSize);
+    }
+    if(this.currentView >= 0){
+      noStroke();
+      fill(this.scrollIndexActiveColor);
+      ellipse(leftX + this.currentView*this.scrollIndexBallContainer, this.scrollIndexYOffset, this.scrollIndexBallSize, this.scrollIndexBallSize);
+    }
+
+    translate(0, 0, -this.viewDepth);
+
+
+
+    //>> show the current view and, when transitioning, the transition
+    if(this.previousView < 0 && this.currentView >= 0){
+      // IS NOT TRANSITIONING
       this.viewList.get(this.currentView).show();
-    }else if(this.isTransitioning && this.transitionSteps.size() > 0){
-      PVector transLookPos = this.transitionSteps.get(0)[0];
-      PVector transLookUp = this.transitionSteps.get(0)[1];
-      this.transitionSteps.remove(0);
-      this.currentCameraLookPos = transLookPos.copy();
-      this.currentCameraUpPos = transLookUp.copy();
-      camera(0,0,0, this.currentCameraLookPos.x,this.currentCameraLookPos.y,this.currentCameraLookPos.z, this.currentCameraUpPos.x,
-                          this.currentCameraUpPos.y,this.currentCameraUpPos.z);
-      this.viewList.get(this.transitionStringFromTo[0]).show();
-      this.viewList.get(this.transitionStringFromTo[1]).show();
-    }else if(this.isTransitioning && !(this.transitionSteps.size() > 0)){
-      this.isTransitioning = false;
-      if(this.executeRunnableAfterTransition){
-        this.executableAfterTransition.run();
-        this.executeRunnableAfterTransition = false;
+    }else if(this.previousView >= 0 && this.currentView >= 0){
+      // IS TRANSITIONING
+      translate(-map(this.transitionOffset, 0, 255, 0, width), 0, 0);
+      this.viewList.get(this.previousView).show();
+      translate(map(this.transitionOffset, 0, 255, 0, width), 0, 0);
+      if(this.transitionDirection){
+        translate(map(255 - this.transitionOffset, 0, 255, 0, width), 0, 0);
+        this.viewList.get(this.currentView).show();
+        translate(-map(255 - this.transitionOffset, 0, 255, 0, width), 0, 0);
+        this.transitionOffset += this.transitionSpeed;
+      }else{
+        translate(map(-255 - this.transitionOffset, -255, 0, -width, 0), 0, 0);
+        this.viewList.get(this.currentView).show();
+        translate(-map(-255 - this.transitionOffset, -255, 0, -width, 0), 0, 0);
+        this.transitionOffset -= this.transitionSpeed;
       }
+      if(this.transitionOffset >= 255 || this.transitionOffset <= -255){
+        this.endTransition();
+      }
+    }
+
+    translate(0, 0, this.viewDepth);
+
+    this.dashboardView.show();
+
+    translate(-this.pos.x, -this.pos.y, -this.pos.z);
+  }
+
+  public void setStartingView(int index){
+    if(index >= 0 && index < this.viewList.size()){
+      this.currentView = index;
     }
   }
 
-  public void addView(String name, View v){
-    this.viewList.put(name, v);
-  }
-
-  public void executeFunctionAfterTransition(Runnable runAfterTransition){
-    this.executableAfterTransition = runAfterTransition;
-    this.executeRunnableAfterTransition = true;
-  }
-
-  public void scrollToView(String name){
-    if(!(name == this.currentView)){
-      if(this.viewList.containsKey(name)){
-        this.setupTransition(name);
-      }
-    }
-  }
-
-  public String getCurrentViewName(){
-    return this.currentView;
+  public void addView(View v){
+    this.viewList.add(v);
   }
 
 
