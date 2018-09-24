@@ -4,7 +4,7 @@ This software will be used for the Dutch CanSat competition.
 
 - Application status: being developed.
 
-### The applicaiton has completely been revisioned!
+### The applicaiton has been completely revisioned!
 
 - The design is now ready to accept more than 4 to 6 views and the layout of the views has changed.
 - You can now scroll between the views using the LEFT and RIGHT arrows on your keyboard.
