@@ -16,7 +16,6 @@ public void setup(){
   surface.setResizable(true);
   pixelDensity(2);
   smooth(8);
-  frameRate(60);
 
   // VARIABLE INIT
   dashboardView = new View(0, 0, 0, DISPLAYINSTANCE_dashboardView);
