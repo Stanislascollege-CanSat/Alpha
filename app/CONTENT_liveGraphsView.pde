@@ -1,7 +1,5 @@
-import java.lang.Runnable;
-
-Runnable DISPLAYINSTANCE_liveGraphsView = new Runnable(){
-  public void run(){
+ViewContent viewContent_liveGraphsView = new ViewContent(){
+  public void show(){
     stroke(0);
     fill(0);
     textAlign(CENTER);

@@ -1,20 +1,18 @@
-import java.lang.Runnable;
-
 public class View {
   // PROPERTIES
   private PVector pos;
-  private Runnable EXT_displayMethod;
+  private ViewContent viewContent;
 
-  // INIT
-  public View(float x, float y, float z, Runnable exe){
+  // CONSTRUCTORS
+  public View(float x, float y, float z, ViewContent content){
     this.pos = new PVector(x,y,z);
-    this.EXT_displayMethod = exe;
+    this.viewContent = content;
   }
 
   // METHODS
   public void show(){
     translate(this.pos.x, this.pos.y, this.pos.z);
-    this.EXT_displayMethod.run();
+    this.viewContent.show();
     translate(-this.pos.x, -this.pos.y, -this.pos.z);
   }
 

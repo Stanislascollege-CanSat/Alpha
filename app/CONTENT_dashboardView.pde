@@ -1,12 +1,5 @@
-import java.lang.Runnable;
+ViewContent viewContent_dashboardView = new ViewContent(){
+  public void show(){
 
-Runnable DISPLAYINSTANCE_dashboardView = new Runnable(){
-  private float console_height = 200;
-
-  public void run(){
-    noStroke();
-    fill(0, 150);
-    rectMode(CORNER);
-    rect(0, height-this.console_height, width, this.console_height);
   }
 };

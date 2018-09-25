@@ -20,6 +20,7 @@ public class ViewManager {
   private color scrollIndexActiveColor;
 
 
+  // CONSTRUCTORS
 
   public ViewManager(float x, float y, float z, View db, float vd){
     this.pos = new PVector(x,y,z);

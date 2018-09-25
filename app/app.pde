@@ -9,7 +9,6 @@ View dashboardView;
 View statusView, liveGraphsView;
 
 
-
 public void setup(){
   // WINDOW SETUP
   fullScreen(P3D);
@@ -18,10 +17,12 @@ public void setup(){
   smooth(8);
 
   // VARIABLE INIT
-  dashboardView = new View(0, 0, 0, DISPLAYINSTANCE_dashboardView);
+  //>> create the dashboardView
+  dashboardView = new View(0, 0, 0, viewContent_dashboardView);
 
-  statusView = new View(0, 0, 0, DISPLAYINSTANCE_statusView);
-  liveGraphsView = new View(0, 0, 0, DISPLAYINSTANCE_liveGraphsView);
+  //>> create the views
+  statusView = new View(0, 0, 0, viewContent_statusView);
+  liveGraphsView = new View(0, 0, 0, viewContent_liveGraphsView);
 
   viewManager = new ViewManager(0, 0, 0, dashboardView, 100);
 
@@ -36,7 +37,6 @@ public void setup(){
 
 
   // POST SETUP
-
 
 }
 
