@@ -7,7 +7,8 @@
 Master master;
 
 public void setup(){
-	size(1000, 600, P3D);
+	//size(1000, 600, P3D);
+	fullScreen(P3D);
 	// pixelDensity(2);
 	smooth(8);
 
