@@ -1,22 +1,21 @@
 //
 // CanSat Mission Control Application: Alpha [Project Beta]
-// CLASS_View.pde
+// CLASS_DataManager.pde
 // Rens Dur
 //
 
-public interface INTERFACE_View {
+public interface INTERFACE_DataManager {
 	// *public methods*
-	public void show();
 }
 
 
 
-public class View implements INTERFACE_View {
+public class DataManager implements INTERFACE_DataManager {
 	// *properties*
 
 
 	// *constructors*
-	public View(){
+	public DataManager(){
 
 	}
 
@@ -24,7 +23,4 @@ public class View implements INTERFACE_View {
 
 
 	// *public methods*
-	public void show(){
-		//skip
-	}
 }

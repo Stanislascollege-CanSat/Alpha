@@ -1,139 +1,160 @@
+//
+// CanSat Mission Control Application: Alpha [Project Beta]
+// CLASS_ViewManager.pde
+// Rens Dur
+//
 
-
-public class ViewManager {
-  // PROPERTIES
-  private PVector pos;
-  private float viewDepth;
-
-  private View dashboardView;
-  private ArrayList<View> viewList;
-  private int currentView;
-  private int previousView;
-  private float transitionOffset;
-  private float transitionSpeed;
-  private boolean transitionDirection;
-
-  private float scrollIndexYOffset;
-  private float scrollIndexBallSize;
-  private float scrollIndexBallContainer;
-  private color scrollIndexInactiveColor;
-  private color scrollIndexActiveColor;
-
-
-  // CONSTRUCTORS
-
-  public ViewManager(float x, float y, float z, View db, float vd){
-    this.pos = new PVector(x,y,z);
-    this.viewDepth = vd;
-
-    this.dashboardView = db;
-    this.viewList = new ArrayList<View>();
-    this.currentView = -1;
-    this.previousView = -1;
-    this.transitionOffset = 0;
-    this.transitionSpeed = 8;
-
-    this.scrollIndexYOffset = 15;
-    this.scrollIndexBallSize = 6;
-    this.scrollIndexBallContainer = 8;
-    this.scrollIndexInactiveColor = color(150);
-    this.scrollIndexActiveColor = color(0);
-  }
-
-  // PRIVATE METHODS
-  private void scrollToView(int index){
-    if(!(index == this.currentView)){
-      if(index >= 0 && index < this.viewList.size()){
-        // >> INDEX IS WITHIN VIEWRANGE
-        this.previousView = this.currentView;
-        this.currentView = index;
-      }else if(index >= this.viewList.size()){
-        this.scrollToView(0);
-      }else if(index < 0){
-        this.scrollToView(this.viewList.size()-1);
-      }
-    }
-  }
-
-  private void endTransition(){
-    this.transitionOffset = 0;
-    this.previousView = -1;
-  }
-
-
-  // PUBLIC METHODS
-  public void scrollToRightView(){
-    this.transitionDirection = true;
-    this.scrollToView(this.currentView + 1);
-  }
-
-  public void scrollToLeftView(){
-    this.transitionDirection = false;
-    this.scrollToView(this.currentView - 1);
-  }
-
-  public void show(){
-    translate(this.pos.x, this.pos.y, this.pos.z);
-    //>> show the current view index
-    float w = this.viewList.size() * this.scrollIndexBallContainer;
-    float h = this.scrollIndexBallContainer;
-    float leftX = width/2 - w/2 + this.scrollIndexBallContainer/2;
-    for(int i = 0; i < this.viewList.size(); ++i){
-      noStroke();
-      fill(this.scrollIndexInactiveColor);
-      ellipse(leftX + i*this.scrollIndexBallContainer, this.scrollIndexYOffset, this.scrollIndexBallSize, this.scrollIndexBallSize);
-    }
-    if(this.currentView >= 0){
-      noStroke();
-      fill(this.scrollIndexActiveColor);
-      ellipse(leftX + this.currentView*this.scrollIndexBallContainer, this.scrollIndexYOffset, this.scrollIndexBallSize, this.scrollIndexBallSize);
-    }
-
-    translate(0, 0, -this.viewDepth);
+public interface INTERFACE_ViewManager {
+	// *public methods*
+	public void show();
+	public void addView(View view);
+	public void setCurrentView(int view);
+	public void scrollToView(int view);
+	public void scrollForwards();
+	public void scrollBackwards();
+}
 
 
 
-    //>> show the current view and, when transitioning, the transition
-    if(this.previousView < 0 && this.currentView >= 0){
-      // IS NOT TRANSITIONING
-      this.viewList.get(this.currentView).show();
-    }else if(this.previousView >= 0 && this.currentView >= 0){
-      // IS TRANSITIONING
-      translate(-map(this.transitionOffset, 0, 255, 0, width), 0, 0);
-      this.viewList.get(this.previousView).show();
-      translate(map(this.transitionOffset, 0, 255, 0, width), 0, 0);
-      if(this.transitionDirection){
-        translate(map(255 - this.transitionOffset, 0, 255, 0, width), 0, 0);
-        this.viewList.get(this.currentView).show();
-        translate(-map(255 - this.transitionOffset, 0, 255, 0, width), 0, 0);
-        this.transitionOffset += this.transitionSpeed;
-      }else{
-        translate(map(-255 - this.transitionOffset, -255, 0, -width, 0), 0, 0);
-        this.viewList.get(this.currentView).show();
-        translate(-map(-255 - this.transitionOffset, -255, 0, -width, 0), 0, 0);
-        this.transitionOffset -= this.transitionSpeed;
-      }
-      if(this.transitionOffset >= 255 || this.transitionOffset <= -255){
-        this.endTransition();
-      }
-    }
+public class ViewManager implements INTERFACE_ViewManager {
+	// *properties*
+	private ArrayList<View> viewList;
+	private int currentView;
+	private int nextView;
+	private boolean isTransitioning;
+	private boolean transitionDirection;
+	private float transitionSpeed;
+	private float transitionOffset;
 
-    translate(0, 0, this.viewDepth);
+	private float dotTopOffset;
+	private float dotContainer;
+	private float dotXMargin;
+	private float dotSize;
 
-    this.dashboardView.show();
-
-    translate(-this.pos.x, -this.pos.y, -this.pos.z);
-  }
-
-  public void setStartingView(int index){
-    if(index >= 0 && index < this.viewList.size()){
-      this.currentView = index;
-    }
-  }
-
-  public void addView(View v){
-    this.viewList.add(v);
-  }
+	private float viewDepth;
 
 
+	// *constructors*
+	public ViewManager(float _viewDepth){
+		this.viewList = new ArrayList<View>();
+		this.currentView = -1;
+		this.isTransitioning = false;
+		this.transitionDirection = false;
+		this.transitionSpeed = 10;
+		this.transitionOffset = 0;
+
+		this.dotTopOffset = 10;
+		this.dotContainer = 8;
+		this.dotXMargin = 1;
+		this.dotSize = 6;
+
+		this.viewDepth = -_viewDepth;
+	}
+
+	// *private methods*
+	private void calculateNextTransition(){
+		if(this.isTransitioning){
+			if(this.transitionDirection){
+				this.transitionOffset -= this.transitionSpeed;
+				if(this.transitionOffset <= -255){
+					this.transitionOffset = 0;
+					this.isTransitioning = false;
+					this.currentView = this.nextView;
+					this.nextView = -1;
+				}
+			}else{
+				this.transitionOffset += this.transitionSpeed;
+				if(this.transitionOffset >= 255){
+					this.transitionOffset = 0;
+					this.isTransitioning = false;
+					this.currentView = this.nextView;
+					this.nextView = -1;
+				}
+			}
+		}
+	}
+
+	private void displayCurrentViewIndicator(){
+		int amountOfDots = this.viewList.size();
+		translate(width/2 - amountOfDots*(this.dotContainer+this.dotXMargin)/2 + this.dotSize/2 + this.dotXMargin/2, this.dotTopOffset, 0);
+		noStroke();
+		fill(150);
+		for(int i = 0; i < amountOfDots; ++i){
+			ellipse(i*(this.dotContainer+this.dotXMargin), 0, this.dotSize, this.dotSize);
+		}
+		fill(0);
+		ellipse(this.currentView*(this.dotContainer+this.dotXMargin), 0, this.dotSize, this.dotSize);
+		translate(-width/2 + amountOfDots*(this.dotContainer+this.dotXMargin)/2 - this.dotSize/2 - this.dotXMargin/2, -this.dotTopOffset, 0);
+	}
+
+
+	// *public methods*
+	public void show(){
+		this.displayCurrentViewIndicator();
+		translate(map(this.transitionOffset, -255, 255, -width, width), 0, this.viewDepth);
+		if(this.currentView >= 0){
+			this.viewList.get(this.currentView).show();
+		}
+		if(this.isTransitioning){
+			if(this.transitionDirection){
+				translate(width, 0, 0);
+				this.viewList.get(this.nextView).show();
+				translate(-width, 0, 0);
+			}else{
+				translate(-width, 0, 0);
+				this.viewList.get(this.nextView).show();
+				translate(width, 0, 0);
+			}
+		}
+		translate(-map(this.transitionOffset, -255, 255, -width, width), 0, -this.viewDepth);
+		this.calculateNextTransition();
+	}
+
+	public void addView(View view){
+		this.viewList.add(view);
+	}
+
+	public void setCurrentView(int view){
+		if(view >= 0 && view < this.viewList.size()){
+			this.currentView = view;
+		}
+	}
+
+	public void scrollToView(int view){
+		if(this.currentView >= 0 && this.currentView < this.viewList.size()){
+			if(view >= 0 && view < this.viewList.size() && view != this.currentView){
+				//the view exists and != currentView
+				this.isTransitioning = true;
+				if(view > this.currentView){
+					this.transitionDirection = true;
+					this.transitionOffset = 0;
+					this.nextView = view;
+				}else{
+					this.transitionDirection = false;
+					this.transitionOffset = 0;
+					this.nextView = view;
+				}
+			}
+		}
+	}
+
+	public void scrollForwards(){
+		if(this.viewList.size() > 1){
+			nextView = this.currentView + 1;
+			if(nextView >= this.viewList.size()){
+				nextView = 0;
+			}
+			this.scrollToView(nextView);
+		}
+	}
+
+	public void scrollBackwards(){
+		if(this.viewList.size() > 1){
+			nextView = this.currentView - 1;
+			if(nextView < 0){
+				nextView = this.viewList.size() - 1;
+			}
+			this.scrollToView(nextView);
+		}
+	}
 }

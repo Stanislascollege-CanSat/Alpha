@@ -1,22 +1,21 @@
 //
 // CanSat Mission Control Application: Alpha [Project Beta]
-// CLASS_View.pde
+// CLASS_SerialManager.pde
 // Rens Dur
 //
 
-public interface INTERFACE_View {
+public interface INTERFACE_SerialManager {
 	// *public methods*
-	public void show();
 }
 
 
 
-public class View implements INTERFACE_View {
+public class SerialManager implements INTERFACE_SerialManager {
 	// *properties*
 
 
 	// *constructors*
-	public View(){
+	public SerialManager(){
 
 	}
 
@@ -24,7 +23,4 @@ public class View implements INTERFACE_View {
 
 
 	// *public methods*
-	public void show(){
-		//skip
-	}
 }
