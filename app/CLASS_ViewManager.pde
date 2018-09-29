@@ -40,7 +40,7 @@ public class ViewManager implements INTERFACE_ViewManager {
 		this.currentView = -1;
 		this.isTransitioning = false;
 		this.transitionDirection = false;
-		this.transitionSpeed = 10;
+		this.transitionSpeed = 600;
 		this.transitionOffset = 0;
 
 		this.dotTopOffset = 10;
@@ -55,7 +55,7 @@ public class ViewManager implements INTERFACE_ViewManager {
 	private void calculateNextTransition(){
 		if(this.isTransitioning){
 			if(this.transitionDirection){
-				this.transitionOffset -= this.transitionSpeed;
+				this.transitionOffset -= this.transitionSpeed/frameRate;
 				if(this.transitionOffset <= -255){
 					this.transitionOffset = 0;
 					this.isTransitioning = false;
@@ -63,7 +63,7 @@ public class ViewManager implements INTERFACE_ViewManager {
 					this.nextView = -1;
 				}
 			}else{
-				this.transitionOffset += this.transitionSpeed;
+				this.transitionOffset += this.transitionSpeed/frameRate;
 				if(this.transitionOffset >= 255){
 					this.transitionOffset = 0;
 					this.isTransitioning = false;
@@ -91,22 +91,22 @@ public class ViewManager implements INTERFACE_ViewManager {
 	// *public methods*
 	public void show(){
 		this.displayCurrentViewIndicator();
-		translate(map(this.transitionOffset, -255, 255, -width, width), 0, this.viewDepth);
+		translate(map(this.transitionOffset, -255, 255, -width + this.viewDepth, width - this.viewDepth), 0, this.viewDepth);
 		if(this.currentView >= 0){
 			this.viewList.get(this.currentView).show();
 		}
 		if(this.isTransitioning){
 			if(this.transitionDirection){
-				translate(width, 0, 0);
+				translate(width - this.viewDepth, 0, 0);
 				this.viewList.get(this.nextView).show();
-				translate(-width, 0, 0);
+				translate(-width + this.viewDepth, 0, 0);
 			}else{
-				translate(-width, 0, 0);
+				translate(-width + this.viewDepth, 0, 0);
 				this.viewList.get(this.nextView).show();
-				translate(width, 0, 0);
+				translate(width - this.viewDepth, 0, 0);
 			}
 		}
-		translate(-map(this.transitionOffset, -255, 255, -width, width), 0, -this.viewDepth);
+		translate(-map(this.transitionOffset, -255, 255, -width + this.viewDepth, width - this.viewDepth), 0, -this.viewDepth);
 		this.calculateNextTransition();
 	}
 

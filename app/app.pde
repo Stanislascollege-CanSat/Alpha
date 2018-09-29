@@ -11,6 +11,7 @@ public void setup(){
 	fullScreen(P3D);
 	// pixelDensity(2);
 	smooth(8);
+	frameRate(65);
 
 
 	master = new Master();

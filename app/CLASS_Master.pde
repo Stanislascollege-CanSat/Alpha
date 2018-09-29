@@ -31,6 +31,9 @@ public class Master implements INTERFACE_Master {
 				textAlign(CENTER);
 				textSize(30);
 				text("First View", width/2, height/2);
+				noFill();
+				rectMode(CORNER);
+				rect(0,0,width,height);
 			}
 		};
 		this.testView2 = new View(){
@@ -40,6 +43,9 @@ public class Master implements INTERFACE_Master {
 				textAlign(CENTER);
 				textSize(30);
 				text("Second View", width/2, height/2);
+				noFill();
+				rectMode(CORNER);
+				rect(0,0,width,height);
 			}
 		};
 
@@ -53,6 +59,11 @@ public class Master implements INTERFACE_Master {
 
 	// *public methods*
 	public void loop(){
+		stroke(0);
+		fill(0);
+		textAlign(LEFT);
+		textSize(20);
+		text(int(frameRate), 10, 20);
 		this.viewManager.show();
 	}
 
