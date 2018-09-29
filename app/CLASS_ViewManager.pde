@@ -6,6 +6,7 @@
 
 public interface INTERFACE_ViewManager {
 	// *public methods*
+	public void toggleDashboardVisible();
 	public void show();
 	public void addView(View view);
 	public void setCurrentView(int view);
@@ -18,6 +19,9 @@ public interface INTERFACE_ViewManager {
 
 public class ViewManager implements INTERFACE_ViewManager {
 	// *properties*
+	private View dashboardView;
+	private boolean dashboardVisible;
+
 	private ArrayList<View> viewList;
 	private int currentView;
 	private int nextView;
@@ -35,7 +39,10 @@ public class ViewManager implements INTERFACE_ViewManager {
 
 
 	// *constructors*
-	public ViewManager(float _viewDepth){
+	public ViewManager(View _dashboardView, float _viewDepth){
+		this.dashboardView = _dashboardView;
+		this.dashboardVisible = false;
+
 		this.viewList = new ArrayList<View>();
 		this.currentView = -1;
 		this.isTransitioning = false;
@@ -89,6 +96,10 @@ public class ViewManager implements INTERFACE_ViewManager {
 
 
 	// *public methods*
+	public void toggleDashboardVisible(){
+		this.dashboardVisible = !this.dashboardVisible;
+	}
+
 	public void show(){
 		this.displayCurrentViewIndicator();
 		translate(map(this.transitionOffset, -255, 255, -width + this.viewDepth, width - this.viewDepth), 0, this.viewDepth);
@@ -107,6 +118,9 @@ public class ViewManager implements INTERFACE_ViewManager {
 			}
 		}
 		translate(-map(this.transitionOffset, -255, 255, -width + this.viewDepth, width - this.viewDepth), 0, -this.viewDepth);
+		if(this.dashboardVisible){
+			this.dashboardView.show();
+		}
 		this.calculateNextTransition();
 	}
 

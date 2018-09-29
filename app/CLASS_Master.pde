@@ -16,13 +16,23 @@ public class Master implements INTERFACE_Master {
 	// *properties*
 	private ViewManager viewManager;
 
+	private View dashboardView;
+
 	public View testView;
 	public View testView2;
 
 
 	// *constructors*
 	public Master(){
-		this.viewManager = new ViewManager(100);
+		this.dashboardView = new View(){
+			public void show(){
+				noStroke();
+				fill(0, 150);
+				rect(0, 0, width, height);
+			}
+		};
+
+		this.viewManager = new ViewManager(this.dashboardView, 100);
 
 		this.testView = new View(){
 			public void show(){
@@ -73,6 +83,8 @@ public class Master implements INTERFACE_Master {
 				this.viewManager.scrollForwards();
 			}else if(keyCode == LEFT){
 				this.viewManager.scrollBackwards();
+			}else if(keyCode == SHIFT){
+				this.viewManager.toggleDashboardVisible();
 			}
 		}
 	}
