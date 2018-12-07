@@ -1,3 +1,5 @@
+import processing.serial.*;
+
 
 AppController appController;
 
@@ -23,4 +25,8 @@ public void mousePressed(){
 
 public void keyPressed(){
   appController.keyPressed();
+}
+
+public void keyReleased(){
+  appController.keyReleased();
 }

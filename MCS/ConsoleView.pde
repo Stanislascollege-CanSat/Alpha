@@ -14,6 +14,7 @@ public class ConsoleView extends ViewController {
   public void show(){
     this.drawStandardOutline();
     for(Element e : this.elements){
+      e.update();
       e.show();
     }
   }
@@ -24,5 +25,9 @@ public class ConsoleView extends ViewController {
   
   public void keyPressed(){
     this.applyKeyPressedToElements();
+  }
+  
+  public void keyReleased(){
+    this.applyKeyReleasedToElements();
   }
 }

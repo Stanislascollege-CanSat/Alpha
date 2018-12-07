@@ -5,6 +5,7 @@ public class AppController {
   private SerialSelectionView serialSelectionView;
   private boolean isSerialSelectionViewOpen;
   private PVector statusViewDimensions;
+  private Serial serialPort;
   
   public AppController(){
     this.statusViewDimensions = new PVector(400, 300);
@@ -55,7 +56,18 @@ public class AppController {
     }
   }
   
+  public void keyReleased(){
+    this.consoleView.keyReleased();
+    this.graphicsView.keyReleased();
+    if(this.isSerialSelectionViewOpen){
+      this.serialSelectionView.keyReleased();
+    }else{
+      this.statusView.keyReleased();
+    }
+  }
+  
   public void openSerialSelectionView(){
+    this.serialSelectionView.pushAvailableSerialPorts(Serial.list());
     this.isSerialSelectionViewOpen = true;
   }
   

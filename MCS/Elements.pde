@@ -14,12 +14,18 @@ public class Element {
   public boolean selected;
   public PFont standardFont;
   
+  public boolean backspacePressed;
+  public int backspaceCount;
+  
   public Element(AppController a, float x, float y, float w, float h){
     this.appController = a;
     this.pos = new PVector(x, y);
     this.width = w;
     this.height = h;
     this.standardFont = createFont("fonts/Exo_2/Exo2-Regular.ttf", 15);
+  }
+  
+  public void update(){
   }
   
   public void show(){
@@ -56,6 +62,8 @@ public class Element {
   
   public void keyboardCode_BACKSPACE(){}
   
+  public void keyboardRelease_BACKSPACE(){}
+  
   public void keyboardCode_ENTER(){}
   
   public void keyPressed(){
@@ -74,6 +82,12 @@ public class Element {
       // Element is pressed by the mouse
       this.select();
       this.elementPressed();
+    }
+  }
+  
+  public void keyReleased(){
+    if(key == BACKSPACE){
+      this.keyboardRelease_BACKSPACE();
     }
   }
 }
@@ -176,6 +190,23 @@ public class InputLineElement extends Element {
     super(a, x, y, w, standardElementHeight);
     this.text = "";
     this.align = align;
+  }
+  
+  public void update(){
+    if(keyPressed && key == BACKSPACE && !this.backspacePressed){
+      this.backspaceCount += 1;
+    }
+    if(this.backspaceCount >= 60){
+      this.backspacePressed = true;
+    }
+    if(this.backspacePressed){
+      this.keyboardCode_BACKSPACE();
+    }
+  }
+  
+  public void keyboardRelease_BACKSPACE(){
+    this.backspaceCount = 0;
+    this.backspacePressed = false;
   }
   
   public void show(){

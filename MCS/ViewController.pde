@@ -33,6 +33,12 @@ public class ViewController {
     }
   }
   
+  public void applyKeyReleasedToElements(){
+    for(Element e : this.elements){
+      e.keyReleased();
+    }
+  }
+  
   public void deselectAllElements(){
     for(Element e : this.elements){
       e.deselect();
