@@ -170,10 +170,12 @@ public class TextBoxElement extends Element {
 
 public class InputLineElement extends Element {
   public String text;
+  public int align;
   
-  public InputLineElement(AppController a, float x, float y, float w){
+  public InputLineElement(AppController a, float x, float y, float w, int align){
     super(a, x, y, w, standardElementHeight);
     this.text = "";
+    this.align = align;
   }
   
   public void show(){
@@ -185,10 +187,16 @@ public class InputLineElement extends Element {
     stroke(0);
     strokeWeight(1);
     fill(0);
-    textAlign(CENTER);
+    textAlign(this.align);
     textFont(this.standardFont);
     textSize(15);
-    text(this.text, (2 * this.pos.x + this.width)/2, (2 * this.pos.y + this.height)/2 + 6);
+    if(this.align == CENTER){
+      text(this.text, (2 * this.pos.x + this.width)/2, (2 * this.pos.y + this.height)/2 + 6);
+    }else if(this.align == LEFT){
+      text(this.text, this.pos.x + 5, (2 * this.pos.y + this.height)/2 + 6);
+    }else if(this.align == RIGHT){
+      text(this.text, this.pos.x + this.width - 5, (2 * this.pos.y + this.height)/2 + 6);
+    }
     if(this.selected){
       this.drawStandardOutline();
     }
@@ -207,6 +215,48 @@ public class InputLineElement extends Element {
   }
   
   public void keyboardCode_ENTER(){
+    
+  }
+}
+
+//
+//
+// ConsoleElement
+//
+//
+
+public class ConsoleElement extends Element {
+  public ArrayList<MessageElement> messageElements;
+  
+  public ConsoleElement(AppController a, float x, float y, float w, float h){
+    super(a, x, y, w, h);
+    this.messageElements = new ArrayList<MessageElement>();
+  }
+  
+  public void show(){
+    stroke(0);
+    strokeWeight(1);
+    fill(255);
+    rectMode(CORNER);
+    rect(this.pos.x, this.pos.y, this.width, this.height);
+    if(this.selected){
+      this.drawStandardOutline();
+    }
+  }
+}
+
+//
+//
+// MessageElement
+//
+//
+
+public class MessageElement extends Element {  
+  public MessageElement(AppController a, float h){
+    super(a, 0, 0, 0, h);
+  }
+  
+  public void show(float y){
     
   }
 }

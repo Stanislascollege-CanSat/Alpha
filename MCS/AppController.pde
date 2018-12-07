@@ -5,27 +5,22 @@ public class AppController {
   private SerialSelectionView serialSelectionView;
   private boolean isSerialSelectionViewOpen;
   private PVector statusViewDimensions;
-  private PVector serialSelectionViewDimensions;
   
   public AppController(){
     this.statusViewDimensions = new PVector(400, 300);
-    this.serialSelectionViewDimensions = new PVector(600, 500);
     this.statusView = new StatusView(this,      0,0,this.statusViewDimensions.x,this.statusViewDimensions.y);
     this.consoleView = new ConsoleView(this,    0,this.statusViewDimensions.y,this.statusViewDimensions.x,height-this.statusViewDimensions.y);
     this.graphicsView = new GraphicsView(this,  this.statusViewDimensions.x,0,width-this.statusViewDimensions.x,height);
-    this.serialSelectionView = new SerialSelectionView(this, width/2 - this.serialSelectionViewDimensions.x/2, height/2 - this.serialSelectionViewDimensions.y/2, this.serialSelectionViewDimensions.x, this.serialSelectionViewDimensions.y);
+    this.serialSelectionView = new SerialSelectionView(this, 0,0,this.statusViewDimensions.x,this.statusViewDimensions.y);
   }
   
   public void show(){
-    this.statusView.show();
     this.consoleView.show();
     this.graphicsView.show();
     if(this.isSerialSelectionViewOpen){
-      noStroke();
-      fill(0, 100);
-      rectMode(CORNER);
-      rect(0, 0, width, height);
       this.serialSelectionView.show();
+    }else{
+      this.statusView.show();
     }
     fill(0);
     textAlign(LEFT);
@@ -41,20 +36,22 @@ public class AppController {
   
   public void mousePressed(){
     this.deselectAllElements();
-    this.statusView.mousePressed();
     this.consoleView.mousePressed();
     this.graphicsView.mousePressed();
     if(this.isSerialSelectionViewOpen){
       this.serialSelectionView.mousePressed();
+    }else{
+      this.statusView.mousePressed();
     }
   }
   
   public void keyPressed(){
-    this.statusView.keyPressed();
     this.consoleView.keyPressed();
     this.graphicsView.keyPressed();
     if(this.isSerialSelectionViewOpen){
       this.serialSelectionView.keyPressed();
+    }else{
+      this.statusView.keyPressed();
     }
   }
   

@@ -7,6 +7,9 @@ public class GraphicsView extends ViewController {
   
   public void show(){
     this.drawStandardOutline();
+    for(Element e : this.elements){
+      e.show();
+    }
   }
   
   public void mousePressed(){

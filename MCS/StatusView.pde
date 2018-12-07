@@ -9,7 +9,7 @@ public class StatusView extends ViewController {
         this.appController.openSerialSelectionView();
       }
     };
-    this.serialNameTextBox = new InputLineElement(this.appController, 140, 5, this.width - 145);
+    this.serialNameTextBox = new InputLineElement(this.appController, 140, 5, this.width - 145, CENTER);
     this.elements.add(this.selectSerialButton);
     this.elements.add(this.serialNameTextBox);
   }
