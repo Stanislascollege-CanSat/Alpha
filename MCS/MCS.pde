@@ -1,6 +1,5 @@
 import processing.serial.*;
 
-
 AppController appController;
 
 public void setup(){
@@ -8,7 +7,7 @@ public void setup(){
   size(1000, 700, P3D);
   pixelDensity(2);
   smooth(8);
-  frameRate(200);
+  frameRate(60);
   
   appController = new AppController();
 }
